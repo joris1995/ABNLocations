@@ -1,0 +1,38 @@
+disabled_rules:
+  - type_body_length
+
+opt_in_rules:
+  - line_length
+  - function_body_length
+  - closure_spacing
+  - empty_count
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - implicit_return
+  - modifier_order
+  - operator_usage_whitespace
+  - redundant_nil_coalescing
+
+line_length:
+  warning: 120
+  error: 150
+
+type_body_length:
+  warning: 400
+  error: 500
+
+function_body_length:
+  warning: 40
+  error: 60
+
+custom_rules:
+  force_cast:
+    regex: '\sas!\s'
+    message: "We don't force cast!☠️"
+    severity: error
+
+  todo_comment:
+    regex: 'TODO:|FIXME:'
+    message: "Avoid TODOs and FIXMEs in production code."
+    severity: warning
