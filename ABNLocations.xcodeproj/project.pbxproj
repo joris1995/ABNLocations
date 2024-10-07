@@ -27,6 +27,7 @@
 		6931879C2CB099270078C396 /* ABNLocations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ABNLocations.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		693187AE2CB099290078C396 /* ABNLocationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ABNLocationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		693187B82CB099290078C396 /* ABNLocationsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ABNLocationsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6936DBA42CB44F1E006FC49C /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +76,7 @@
 		693187932CB099270078C396 = {
 			isa = PBXGroup;
 			children = (
+				6936DBA42CB44F1E006FC49C /* Domain */,
 				6931879E2CB099270078C396 /* ABNLocations */,
 				693187B12CB099290078C396 /* ABNLocationsTests */,
 				693187BB2CB099290078C396 /* ABNLocationsUITests */,
@@ -238,6 +240,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		693187CC2CB1563C0078C396 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
