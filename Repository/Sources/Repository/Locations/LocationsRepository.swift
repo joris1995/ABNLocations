@@ -51,6 +51,9 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
     }
     
     public func updateloation(_ location: Location) async throws -> Location {
+        guard location.source == .custom else {
+            throw LocationsRepositorError.cannotModifyOnlineRecord
+        }
         return try await localLocationsSerivce.updateLocation(location)
     }
     

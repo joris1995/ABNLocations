@@ -7,4 +7,5 @@
 
 public enum LocationsRepositorError: Error {
     case cannotDeleteOnlineRecord
+    case cannotModifyOnlineRecord
 }
