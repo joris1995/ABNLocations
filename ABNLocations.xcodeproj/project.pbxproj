@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		69161F0A2CB5BBD400FF2039 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 69161F092CB5BBD400FF2039 /* Domain */; };
+		69161F0C2CB5BBD400FF2039 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 69161F0B2CB5BBD400FF2039 /* Presentation */; };
+		69161F0E2CB5BBD400FF2039 /* Repository in Frameworks */ = {isa = PBXBuildFile; productRef = 69161F0D2CB5BBD400FF2039 /* Repository */; };
+		69161F102CB5BBD400FF2039 /* Service in Frameworks */ = {isa = PBXBuildFile; productRef = 69161F0F2CB5BBD400FF2039 /* Service */; };
+		69161F122CB5BBD400FF2039 /* UseCase in Frameworks */ = {isa = PBXBuildFile; productRef = 69161F112CB5BBD400FF2039 /* UseCase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		693187AF2CB099290078C396 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -25,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		69161EEE2CB5AC8F00FF2039 /* UseCase */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UseCase; sourceTree = "<group>"; };
+		69161EFE2CB5B91000FF2039 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
 		6931879C2CB099270078C396 /* ABNLocations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ABNLocations.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		693187AE2CB099290078C396 /* ABNLocationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ABNLocationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		693187B82CB099290078C396 /* ABNLocationsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ABNLocationsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,6 +65,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69161F102CB5BBD400FF2039 /* Service in Frameworks */,
+				69161F0C2CB5BBD400FF2039 /* Presentation in Frameworks */,
+				69161F0A2CB5BBD400FF2039 /* Domain in Frameworks */,
+				69161F0E2CB5BBD400FF2039 /* Repository in Frameworks */,
+				69161F122CB5BBD400FF2039 /* UseCase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,9 +90,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		69161F082CB5BBD400FF2039 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		693187932CB099270078C396 = {
 			isa = PBXGroup;
 			children = (
+				69161EFE2CB5B91000FF2039 /* Presentation */,
 				69161EEE2CB5AC8F00FF2039 /* UseCase */,
 				6936DBAC2CB475B3006FC49C /* Repository */,
 				6936DBAA2CB460E9006FC49C /* Service */,
@@ -86,6 +108,7 @@
 				6931879E2CB099270078C396 /* ABNLocations */,
 				693187B12CB099290078C396 /* ABNLocationsTests */,
 				693187BB2CB099290078C396 /* ABNLocationsUITests */,
+				69161F082CB5BBD400FF2039 /* Frameworks */,
 				6931879D2CB099270078C396 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -121,6 +144,11 @@
 			);
 			name = ABNLocations;
 			packageProductDependencies = (
+				69161F092CB5BBD400FF2039 /* Domain */,
+				69161F0B2CB5BBD400FF2039 /* Presentation */,
+				69161F0D2CB5BBD400FF2039 /* Repository */,
+				69161F0F2CB5BBD400FF2039 /* Service */,
+				69161F112CB5BBD400FF2039 /* UseCase */,
 			);
 			productName = ABNLocations;
 			productReference = 6931879C2CB099270078C396 /* ABNLocations.app */;
@@ -206,6 +234,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				693187CB2CB155FF0078C396 /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				69161F062CB5BBA100FF2039 /* XCLocalSwiftPackageReference "Presentation" */,
+				69161F072CB5BBAC00FF2039 /* XCLocalSwiftPackageReference "Domain" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6931879D2CB099270078C396 /* Products */;
@@ -592,6 +622,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		69161F062CB5BBA100FF2039 /* XCLocalSwiftPackageReference "Presentation" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Presentation;
+		};
+		69161F072CB5BBAC00FF2039 /* XCLocalSwiftPackageReference "Domain" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Domain;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		693187CB2CB155FF0078C396 /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -602,6 +643,29 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		69161F092CB5BBD400FF2039 /* Domain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Domain;
+		};
+		69161F0B2CB5BBD400FF2039 /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
+		};
+		69161F0D2CB5BBD400FF2039 /* Repository */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Repository;
+		};
+		69161F0F2CB5BBD400FF2039 /* Service */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Service;
+		};
+		69161F112CB5BBD400FF2039 /* UseCase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UseCase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 693187942CB099270078C396 /* Project object */;
 }

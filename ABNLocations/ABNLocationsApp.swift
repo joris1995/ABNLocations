@@ -7,26 +7,28 @@
 
 import SwiftUI
 import SwiftData
+import Domain
+import Presentation
 
 @main
 struct ABNLocationsApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
+    var presentationFactory: any PresentationFactoryProtocol
+    
+    init() {
+        
+        var modelContainerFactory: ModelContainerFactoryProtocol
+        modelContainerFactory = ModelContainerFactory()
+        
+        let locationsRepository = LocationsRepositoryFactor(modelContainer: modelContainerFactory.createModelContainer()).provideReportRepository()
+        
+        self.presentationFactory = PresentationFactory(locationsRepository: locationsRepository)
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LocationsOverview(
+                viewModel: presentationFactory.createLocationsOverviewViewModel()
+            )
         }
-        .modelContainer(sharedModelContainer)
     }
 }
