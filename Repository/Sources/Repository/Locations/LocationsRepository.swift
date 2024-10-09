@@ -26,16 +26,18 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
         if hasConnection {
             // we load and then remove all existing records sourced from the server
             do {
-                try await removeAllOnlineLocations()
-            } catch {
-                throw LocationsRepositoryFetchError.loadingFailed("Error while cleaning up local data cache: \(error.localizedDescription)")
-            }
-            
-            do {
-                // we now load online records, and store them in our local persistence
                 var workingObject: [Location]
                 do {
-                    workingObject = try await loadAndStoreOnlineLocations();
+                    // we first attempt to load locations from the server.
+                    workingObject = try await remoteLocationsSerivce.readLocations()
+                    
+                    // if this was successful, we clean the local cache
+                    try await removeAllServerRecords()
+                    
+                    // now, we store the newly fetched records in our local store as fallback for later
+                    for location in workingObject {
+                        _ = try await localLocationsSerivce.createLocation(location)
+                    }
                 } catch {
                     // however, if we fail, we fail silently and fall back to our local cache
                     // TODO: Still let the user know we were not able to connect to the server and we're working with cached data here
@@ -74,7 +76,7 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
         }
     }
     
-    public func updateloation(_ location: Location) async throws(LocationsRepositoryUpdateError) -> Location {
+    public func updatelocation(_ location: Location) async throws(LocationsRepositoryUpdateError) -> Location {
         guard location.source == .custom else {
             throw LocationsRepositoryUpdateError.cannotModifyOnlineRecord
         }
@@ -108,23 +110,14 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
     }
     
     // MARK: Convenience functions
-    func removeAllOnlineLocations() async throws {
+    private func removeAllServerRecords() async throws {
         let locations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "server" })
         for location in locations {
             try await localLocationsSerivce.deleteLocation(location)
         }
     }
     
-    func loadAndStoreOnlineLocations() async throws -> [Location] {
-        let locations = try await remoteLocationsSerivce.readLocations()
-        for location in locations {
-            _ = try await localLocationsSerivce.createLocation(location)
-        }
-        
-        return locations
-    }
-    
-    func removeExpiredLocations() async throws {
+    private func removeExpiredLocations() async throws {
         let expiredLocations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "server" }).filter { $0.expirationDate ?? Date() < Date() }
                 
         for location in expiredLocations {
@@ -132,7 +125,7 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
         }
     }
     
-    func loadLocalLocations(removeExpiredRecords: Bool = true, sources: [LocationSource]) async throws(LocationsRepositoryFetchError) -> [Location] {
+    private func loadLocalLocations(removeExpiredRecords: Bool = true, sources: [LocationSource]) async throws(LocationsRepositoryFetchError) -> [Location] {
         // we first remove expired locations from the datastore
         if removeExpiredRecords {
             do {

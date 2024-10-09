@@ -28,7 +28,7 @@ public final class UpdateLocationUseCase: UpdateLocationUseCaseProtocol {
 
     public func execute(_ location: Location) async throws(UpdateLocationUseCaseError) -> Location {
         do {
-            return try await repository.updateloation(location)
+            return try await repository.updatelocation(location)
         } catch {
             switch error {
             case .cannotModifyOnlineRecord:
