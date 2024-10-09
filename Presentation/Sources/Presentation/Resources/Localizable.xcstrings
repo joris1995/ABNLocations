@@ -45,6 +45,17 @@
         }
       }
     },
+    "location_detail_view_actions_section_open_wikipedia_error_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cannot open Wikipedia. Please make sure you have the Wikipedia app installed!"
+          }
+        }
+      }
+    },
     "location_detail_view_actions_section_save_title" : {
       "extractionState" : "manual",
       "localizations" : {

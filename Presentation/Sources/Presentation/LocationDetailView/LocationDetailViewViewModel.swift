@@ -196,6 +196,11 @@ public final class LocationDetailViewModel: ObservableObject {
         guard let location = location, let url = URL(string: "wikipedia://places?WMFLocationCoordinates=long=\(location.longitude),lat=\(location.latitude)") else { return }
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
+        } else {
+            self.errorMessage = LocationDetailViewModelErrorMessage(
+                title: String.localized("alert_title_error"),
+                serverMessage: String.localized("Cannot open Wikipedia. Please make sure you have the Wikipedia app installed!")
+            )
         }
     }
     
