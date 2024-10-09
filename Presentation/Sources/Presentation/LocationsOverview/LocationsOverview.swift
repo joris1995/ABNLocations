@@ -8,7 +8,6 @@
 import SwiftUI
 import UseCase
 import Service
-import Repository
 import Domain
 
 public struct LocationsOverview: View {
