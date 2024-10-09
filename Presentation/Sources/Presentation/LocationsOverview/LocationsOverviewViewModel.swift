@@ -60,7 +60,13 @@ public class LocationsOverviewViewModel: ObservableObject {
     }
     
     func removeLocation(_ location: Location) {
-        
+        guard location.source == .custom else {
+            self.activeError = LocationsOverviewError(
+                title: String.localized("alert_title_error"),
+                message: String.localized("locations_overview_error_cannot_remove_server_location")
+                )
+            return
+        }
         // first remove optimistically in place
         if let indexOfLocation = locations.firstIndex(of: location) {
             locations.remove(at: indexOfLocation)
