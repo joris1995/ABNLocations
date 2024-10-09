@@ -27,12 +27,12 @@ public final class RemoveLocationUseCase: RemoveLocationUseCaseProtocol {
 
     public func execute(_ location: Location) async throws(RemoveLocationUseCaseError) {
         do {
-            return try await repository.deleteLocation(location)
+            return try await repository.removeLocation(location)
         } catch {
             switch error {
-            case .cannotDeleteOnlineRecord:
+            case .cannotRemoveOnlineRecord:
                 throw .cannotRemoveServerLocation
-            case .deleteRecordFailed(let message):
+            case .removeRecordFailed(let message):
                 throw .removingFailed(message)
             }
         }

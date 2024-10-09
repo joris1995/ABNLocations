@@ -69,7 +69,7 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
             switch error {
             case .insertFailed(let message):
                 throw LocationsRepositoryAddError.addLocationFailed("Error while adding location: \(message ?? "unkown")")
-            case .notFound, .fetchFailed, .updateFailed, .deleteFailed:
+            case .notFound, .fetchFailed, .updateFailed, .removeFailed:
                 throw LocationsRepositoryAddError.addLocationFailed("An unanticipated error occured")
             }
             
@@ -87,24 +87,24 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
             switch error {
             case .updateFailed(let message):
                 throw LocationsRepositoryUpdateError.updateLocationFailed("Error while updating location: \(message ?? "unkown")")
-            case .notFound, .fetchFailed, .insertFailed, .deleteFailed:
+            case .notFound, .fetchFailed, .insertFailed, .removeFailed:
                 throw LocationsRepositoryUpdateError.updateLocationFailed("An unanticipated error occured")
             }
         }
     }
     
-    public func deleteLocation(_ location: Location) async throws(LocationsRepositoryDeleteError) {
+    public func removeLocation(_ location: Location) async throws(LocationsRepositoryRemoveError) {
         guard location.source == .custom else {
-            throw LocationsRepositoryDeleteError.cannotDeleteOnlineRecord
+            throw LocationsRepositoryRemoveError.cannotRemoveOnlineRecord
         }
         do {
-            return try await localLocationsSerivce.deleteLocation(location)
+            return try await localLocationsSerivce.removeLocation(location)
         } catch {
             switch error {
-            case .deleteFailed(let message):
-                throw LocationsRepositoryDeleteError.deleteRecordFailed("Error while deleting location: \(message ?? "unkown")")
+            case .removeFailed(let message):
+                throw LocationsRepositoryRemoveError.removeRecordFailed("Error while deleting location: \(message ?? "unkown")")
             case .notFound, .fetchFailed, .insertFailed, .updateFailed:
-                throw LocationsRepositoryDeleteError.deleteRecordFailed("An unanticipated error occured")
+                throw LocationsRepositoryRemoveError.removeRecordFailed("An unanticipated error occured")
             }
         }
     }
@@ -113,7 +113,7 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
     private func removeAllServerRecords() async throws {
         let locations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "server" })
         for location in locations {
-            try await localLocationsSerivce.deleteLocation(location)
+            try await localLocationsSerivce.removeLocation(location)
         }
     }
     
@@ -121,7 +121,7 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
         let expiredLocations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "server" }).filter { $0.expirationDate ?? Date() < Date() }
                 
         for location in expiredLocations {
-            try await localLocationsSerivce.deleteLocation(location)
+            try await localLocationsSerivce.removeLocation(location)
         }
     }
     

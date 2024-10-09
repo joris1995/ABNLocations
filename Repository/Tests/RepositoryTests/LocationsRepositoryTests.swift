@@ -103,7 +103,7 @@ final class RepositoryTests: XCTestCase {
     // Given we have no connection and expired locations in our local storage
     // When we fetch locations
     // We expect those to be filtered out
-    func test_fetch_locations_deletes_expired_records() async throws {
+    func test_fetch_locations_removes_expired_records() async throws {
         guard let repository = repository else { throw RepositoryTestsError.noRepository }
         mockNetworkMonitor.hasConnection = false
         
@@ -134,25 +134,25 @@ final class RepositoryTests: XCTestCase {
     }
     
     // Given location is custom
-    // When we delete the location
-    // We expect to delete the location from the local service
-    func test_can_delete_custom_records() async throws {
+    // When we remove the location
+    // We expect to remove the location from the local service
+    func test_can_remove_custom_records() async throws {
         guard let repository = repository else { throw RepositoryTestsError.noRepository }
         let customLocation = Location(id: UUID(), name: "LocalLocation", latitude: 52.3676, longitude: 4.9041, source: .custom)
-        try await repository.deleteLocation(customLocation)
-        XCTAssertTrue(mockLocalLocationsService.didDeleteLocation)
+        try await repository.removeLocation(customLocation)
+        XCTAssertTrue(mockLocalLocationsService.didRemoveLocation)
     }
     
     // Given location is from service
-    // When we delete the location
-    // We expect to throw cannot delete service location error
-    func test_cannot_delete_server_records() async throws {
+    // When we remove the location
+    // We expect to throw cannot remove service location error
+    func test_cannot_remove_server_records() async throws {
         guard let repository = repository else { throw RepositoryTestsError.noRepository }
         let serviceLocation = Location(id: UUID(), name: "ServiceLocation", latitude: 52.5200, longitude: 13.4050, source: .server)
         do {
-            try await repository.deleteLocation(serviceLocation)
+            try await repository.removeLocation(serviceLocation)
         } catch {
-            XCTAssertEqual(error, .cannotDeleteOnlineRecord)
+            XCTAssertEqual(error, .cannotRemoveOnlineRecord)
         }
     }
     
@@ -184,7 +184,7 @@ final class RepositoryTests: XCTestCase {
 final class MockLocalLocationsService: LocalLocationsServiceProtocol, @unchecked Sendable {
 
     var mockLocations: [Location] = []
-    var didDeleteLocation: Bool = false
+    var didRemoveLocation: Bool = false
     var didUpdateLocation: Bool = false
 
     func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location] {
@@ -207,9 +207,9 @@ final class MockLocalLocationsService: LocalLocationsServiceProtocol, @unchecked
         return location
     }
     
-    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
+    func removeLocation(_ location: Location) async throws(LocalLocationsServiceError) {
         mockLocations.removeAll {$0.id == location.id}
-        didDeleteLocation = true
+        didRemoveLocation = true
     }
 }
 

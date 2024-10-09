@@ -35,7 +35,7 @@ public class UseCaseTestUtils {
 final class MockLocalLocationsServiceSuccessResponse: LocalLocationsServiceProtocol, @unchecked Sendable {
 
     var mockLocations: [Location] = []
-    var didDeleteLocation: Bool = false
+    var didRemoveLocation: Bool = false
 
     func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location] {
         return mockLocations
@@ -49,16 +49,16 @@ final class MockLocalLocationsServiceSuccessResponse: LocalLocationsServiceProto
         return location
     }
     
-    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
+    func removeLocation(_ location: Location) async throws(LocalLocationsServiceError) {
         mockLocations.removeAll {$0.id == location.id}
-        didDeleteLocation = true
+        didRemoveLocation = true
     }
 }
 
 final class MockLocalLocationsServiceFailureResponse: LocalLocationsServiceProtocol, @unchecked Sendable {
 
     var mockLocations: [Location] = []
-    var didDeleteLocation: Bool = false
+    var didRemoveLocation: Bool = false
 
     func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location] {
         throw LocalLocationsServiceError.fetchFailed("Failre")
@@ -72,8 +72,8 @@ final class MockLocalLocationsServiceFailureResponse: LocalLocationsServiceProto
         throw LocalLocationsServiceError.updateFailed("Failre")
     }
     
-    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
-        throw LocalLocationsServiceError.deleteFailed("Failre")
+    func removeLocation(_ location: Location) async throws(LocalLocationsServiceError) {
+        throw LocalLocationsServiceError.removeFailed("Failre")
     }
 }
 

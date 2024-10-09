@@ -13,12 +13,12 @@ public enum LocalLocationsServiceError: Error {
     case fetchFailed(String?)
     case insertFailed(String?)
     case updateFailed(String?)
-    case deleteFailed(String?)
+    case removeFailed(String?)
 }
 
 public protocol LocalLocationsServiceProtocol: Sendable {
     func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location]
     func createLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location
     func updateLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location
-    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError)
+    func removeLocation(_ location: Location) async throws(LocalLocationsServiceError)
 }

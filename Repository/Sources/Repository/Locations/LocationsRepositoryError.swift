@@ -14,9 +14,9 @@ public enum LocationsRepositoryUpdateError: Error, Equatable {
     case updateLocationFailed(String?)
 }
 
-public enum LocationsRepositoryDeleteError: Error, Equatable {
-    case cannotDeleteOnlineRecord
-    case deleteRecordFailed(String?)
+public enum LocationsRepositoryRemoveError: Error, Equatable {
+    case cannotRemoveOnlineRecord
+    case removeRecordFailed(String?)
 }
 
 public enum LocationsRepositoryAddError: Error, Equatable {

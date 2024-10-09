@@ -19,5 +19,5 @@ public protocol LocationsRepositoryProtocol: Sendable {
     func getLocations() async throws(LocationsRepositoryFetchError) -> [Location]
     func createLocation(_ location: Location) async throws(LocationsRepositoryAddError) -> Location
     func updatelocation(_ location: Location) async throws(LocationsRepositoryUpdateError) -> Location
-    func deleteLocation(_ location: Location) async throws(LocationsRepositoryDeleteError)
+    func removeLocation(_ location: Location) async throws(LocationsRepositoryRemoveError)
 }

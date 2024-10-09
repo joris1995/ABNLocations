@@ -61,13 +61,13 @@ public actor LocalLocationsService: LocalLocationsServiceProtocol {
         }
     }
     
-    public func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
+    public func removeLocation(_ location: Location) async throws(LocalLocationsServiceError) {
         do {
             let locationId = location.id
             try modelContext.delete(model: DBLocation.self, where: #Predicate { $0.id == locationId })
             try modelContext.save()
         } catch {
-            throw LocalLocationsServiceError.deleteFailed(error.localizedDescription)
+            throw LocalLocationsServiceError.removeFailed(error.localizedDescription)
         }
     }
 }
