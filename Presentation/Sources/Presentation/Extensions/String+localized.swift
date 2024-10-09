@@ -9,8 +9,7 @@ import Foundation
 import SwiftUI
 
 public extension String {
-    static func localized(_ key: String) -> LocalizedStringKey {
-        let localizedString = NSLocalizedString(key, tableName: nil, bundle: .module, value: "", comment: "")
-        return LocalizedStringKey(localizedString)
+    static func localized(_ key: String) -> String {
+        return NSLocalizedString(key, tableName: nil, bundle: .module, value: "", comment: "")
     }
 }

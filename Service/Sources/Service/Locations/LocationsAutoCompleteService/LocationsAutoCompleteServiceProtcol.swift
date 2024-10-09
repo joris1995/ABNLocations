@@ -8,6 +8,11 @@
 import Foundation
 import Domain
 
+public enum LocationsAutoCompleteServiceError: Error {
+    case fetchFailed(String?)
+    case noConnection
+}
+
 public protocol LocationsAutocompleteServiceProtocol: Sendable {
-    func loadSuggestions(for query: String) async throws -> [LocationPreview]
+    func loadSuggestions(for query: String) async throws(LocationsAutoCompleteServiceError) -> [LocationPreview]
 }

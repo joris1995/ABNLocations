@@ -9,8 +9,13 @@ import Foundation
 import Domain
 import Repository
 
+public enum RemoveLocationUseCaseError: Error, Equatable {
+    case cannotRemoveServerLocation
+    case removingFailed(String?)
+}
+
 public protocol RemoveLocationUseCaseProtocol: Sendable {
-    func execute(_ location: Location) async throws
+    func execute(_ location: Location) async throws(RemoveLocationUseCaseError)
 }
 
 public final class RemoveLocationUseCase: RemoveLocationUseCaseProtocol {
@@ -20,7 +25,16 @@ public final class RemoveLocationUseCase: RemoveLocationUseCaseProtocol {
         self.repository = repository
     }
 
-    public func execute(_ location: Location) async throws {
-        return try await repository.deleteLocation(location)
+    public func execute(_ location: Location) async throws(RemoveLocationUseCaseError) {
+        do {
+            return try await repository.deleteLocation(location)
+        } catch {
+            switch error {
+            case .cannotDeleteOnlineRecord:
+                throw .cannotRemoveServerLocation
+            case .deleteRecordFailed(let message):
+                throw .removingFailed(message)
+            }
+        }
     }
 }

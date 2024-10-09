@@ -53,17 +53,6 @@ struct LocationDetailView: View {
                         .accessibilityLabel(String.localized("location_detail_view_actions_section_wikipedia_link_title"))
                     }
                 }
-            
-            if let errorMessage = viewModel.errorMessage {
-                    Section {
-                        Text(errorMessage.localizedKey)
-                            .foregroundColor(.red)
-                        
-                        if let serverMessage = errorMessage.serverMessage {
-                            Text(serverMessage)
-                        }
-                    }
-                }
             }
             .navigationTitle(String.localized("location_detail_view_navigationbar_title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -74,6 +63,14 @@ struct LocationDetailView: View {
                     }
                     .accessibilityLabel(String.localized("location_detail_view_navigation_bar_dismiss_title"))
                 }
+            }.alert(item: $viewModel.errorMessage) { errorMessage in
+                Alert(
+                    title: Text(errorMessage.title),
+                    message: Text(errorMessage.serverMessage ?? ""),
+                    dismissButton: .default(Text(String.localized("alert_buttons_dismiss")), action: {
+                        viewModel.errorMessage = nil
+                    })
+                )
             }
         }
     }

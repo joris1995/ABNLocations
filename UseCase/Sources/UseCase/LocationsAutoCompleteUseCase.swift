@@ -9,8 +9,13 @@ import Foundation
 import Domain
 import Repository
 
+public enum LocationsAutoCompleteUseCaseError: Error {
+    case loadingFailed(String?)
+    case noConnection
+}
+
 public protocol LocationsAutoCompleteUseCaseProtocol: Sendable {
-    func execute(with query: String) async throws -> [LocationPreview]
+    func execute(with query: String) async throws(LocationsAutoCompleteUseCaseError) -> [LocationPreview]
 }
 
 public final class LocationsAutoCompleteUseCase: LocationsAutoCompleteUseCaseProtocol {
@@ -20,7 +25,16 @@ public final class LocationsAutoCompleteUseCase: LocationsAutoCompleteUseCasePro
         self.locationRepository = locationRepository
     }
     
-    public func execute(with query: String) async throws -> [LocationPreview] {
-        return try await locationRepository.fetchLocations(query: query)
+    public func execute(with query: String) async throws(LocationsAutoCompleteUseCaseError) -> [LocationPreview] {
+        do {
+            return try await locationRepository.fetchLocations(query: query)
+        } catch {
+            switch error {
+            case .invalidResponse(let message):
+                throw .loadingFailed(message)
+            case .noConnection:
+                throw .noConnection
+            }
+        }
     }
 }

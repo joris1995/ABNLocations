@@ -147,9 +147,9 @@ final class MockFetchLocationsUseCase: FetchLocationsUseCaseProtocol, @unchecked
         self.mockLocations = mockLocations
     }
 
-    func execute() async throws -> [Location] {
+    func execute() async throws(FetchLocationsUseCaseError) -> [Location] {
         if shouldThrowError {
-            throw NSError(domain: "TestError", code: 1, userInfo: nil)
+            throw .fetchFailed("Error")
         }
         return mockLocations
     }
@@ -159,7 +159,7 @@ final class MockAddLocationsUseCase: AddLocationUseCaseProtocol, @unchecked Send
     
     init() { }
 
-    func execute(_ location: Location) async throws -> Location {
+    func execute(_ location: Location) async throws(AddLocationUseCaseError) -> Location {
         return location
     }
 }
@@ -172,9 +172,9 @@ final class MockRemoveLocationUseCase: RemoveLocationUseCaseProtocol, @unchecked
         self.shouldThrowError = shouldThrowError
     }
 
-    func execute(_ location: Location) async throws {
+    func execute(_ location: Location) async throws(RemoveLocationUseCaseError) {
         if shouldThrowError {
-            throw NSError(domain: "TestError", code: 2, userInfo: nil)
+            throw .removingFailed("Error")
         }
         removedLocation = location
     }

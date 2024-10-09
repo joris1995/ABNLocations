@@ -8,6 +8,14 @@
 import Foundation
 import Domain
 
+public enum RemoteLocationsServiceError: Error {
+    case invalidURL
+    case invalidResponse(String)
+    case parsingError(String)
+    case networkError(Error)
+}
+
+
 public struct RemoteLocationsServiceConfiguration: Sendable {
     let baseUrl: String
     let locationsEndpoint: String
@@ -23,7 +31,7 @@ public protocol RemoteLocationsServiceProtocol: Sendable {
     
     init(configuration: RemoteLocationsServiceConfiguration)
     
-    func readLocations() async throws -> [Location]
+    func readLocations() async throws(RemoteLocationsServiceError) -> [Location]
 }
 
 extension RemoteLocationsServiceProtocol {

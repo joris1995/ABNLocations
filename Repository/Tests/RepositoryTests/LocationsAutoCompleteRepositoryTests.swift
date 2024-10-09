@@ -105,13 +105,13 @@ final class MockAutoCompleteServiceSuccessResponse: LocationsAutocompleteService
         LocationPreview(name: "Test 3", longitude: 1, latitude: 0)
     ]
     
-    func loadSuggestions(for query: String) async throws -> [LocationPreview] {
+    func loadSuggestions(for query: String) async throws(LocationsAutoCompleteServiceError) -> [LocationPreview] {
         return mockPreviews
     }
 }
 
 final class MockAutoCompleteServiceFailureResponse: LocationsAutocompleteServiceProtocol, @unchecked Sendable {
-    func loadSuggestions(for query: String) async throws -> [LocationPreview] {
-        throw ServiceError.invalidResponse("Failure")
+    func loadSuggestions(for query: String) async throws(LocationsAutoCompleteServiceError) -> [LocationPreview] {
+        throw LocationsAutoCompleteServiceError.fetchFailed("Error")
     }
 }

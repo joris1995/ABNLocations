@@ -4,13 +4,6 @@
 import Foundation
 import Domain
 
-public enum RemoteLocationsServiceError: Error {
-    case invalidURL
-    case invalidResponse(String)
-    case parsingError(String)
-    case networkError(Error)
-}
-
 public final class RemoteLocationsService: RemoteLocationsServiceProtocol {
     public let configuration: RemoteLocationsServiceConfiguration
     
@@ -18,7 +11,7 @@ public final class RemoteLocationsService: RemoteLocationsServiceProtocol {
         self.configuration = configuration
     }
     
-    public func readLocations() async throws -> [Location] {
+    public func readLocations() async throws(RemoteLocationsServiceError) -> [Location] {
         do {
             guard let url = locationsUrl else {
                 throw RemoteLocationsServiceError.invalidURL

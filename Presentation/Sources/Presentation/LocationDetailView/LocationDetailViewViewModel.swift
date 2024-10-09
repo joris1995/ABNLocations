@@ -8,7 +8,6 @@
 import Foundation
 import UseCase
 import Domain
-import Repository
 import UIKit
 import SwiftUI
 import Combine
@@ -24,12 +23,14 @@ enum AutoCompleteViewModel {
     case results([LocationPreview])
 }
 
-struct LocationDetailViewModelErrorMessage {
-    let localizedKey: LocalizedStringKey
+struct LocationDetailViewModelErrorMessage: Identifiable {
+    var id: UUID = UUID()
+    
+    let title: String
     let serverMessage: String?
     
-    init(localizedKey: LocalizedStringKey, serverMessage: String? = nil) {
-        self.localizedKey = localizedKey
+    init(title: String, serverMessage: String? = nil) {
+        self.title = title
         self.serverMessage = serverMessage
     }
 }
@@ -90,7 +91,8 @@ public final class LocationDetailViewModel: ObservableObject {
     func saveLocation() async throws -> Location {
         guard isEditable, Double(latitude) != nil, Double(longitude) != nil else {
             self.errorMessage = LocationDetailViewModelErrorMessage(
-                localizedKey: String.localized("location_detail_view_error_messages_invalid_coordinates")
+                title: String.localized("alert_title_error"),
+                serverMessage: String.localized("location_detail_view_error_messages_invalid_coordinates")
             )
             throw LocationDetailViewViewModelError.invalidCoordinates
         }
@@ -107,38 +109,13 @@ public final class LocationDetailViewModel: ObservableObject {
             let result = try await addLocationUseCase.execute(locationToSave)
             return result
         } catch {
-            // TODO: Fix error handling, this is messy
-            if let receivevError = error as? LocationDetailViewViewModelError {
-                switch receivevError {
-                case .invalidCoordinates:
-                    self.errorMessage = LocationDetailViewModelErrorMessage(
-                        localizedKey: String.localized("location_detail_view_error_messages_invalid_coordinates")
-                    )
-                default:
-                    self.errorMessage = LocationDetailViewModelErrorMessage(
-                        localizedKey: String.localized("location_detail_view_autocomplete_section_load_failure_message_generic")
-                    )
-                }
-            }
-            
-            if let locationsRepositoryError = error as? LocationsRepositoryError {
-                switch locationsRepositoryError {
-                case .cannotModifyOnlineRecord:
-                    self.errorMessage = LocationDetailViewModelErrorMessage(
-                        localizedKey: String.localized("location_detail_view_actions_section_save_title")
-                    )
-                    throw LocationDetailViewViewModelError.cannotSaveServerRecord
-                default:
-                    self.errorMessage = LocationDetailViewModelErrorMessage(
-                        localizedKey: String.localized("location_detail_view_autocomplete_section_load_failure_message_generic")
-                    )
-                    throw LocationDetailViewViewModelError.unknownError
-                }
-            } else {
+            switch error {
+            case .failedToAdd(let message):
                 self.errorMessage = LocationDetailViewModelErrorMessage(
-                    localizedKey: String.localized("location_detail_view_autocomplete_section_load_failure_message_generic")
+                    title: String.localized("alert_title_error"),
+                    serverMessage: message
                 )
-                throw LocationDetailViewViewModelError.unknownError
+                throw error
             }
         }
     }
@@ -155,21 +132,14 @@ public final class LocationDetailViewModel: ObservableObject {
             do {
                 let suggestions = try await autoCompleteUseCase.execute(with: text)
                 self.autoCompletePreview = .results(suggestions)
-            } catch {
-                if let autoCompleteError = error as? LocationsAutoCompleteRepositoryError {
-                    switch autoCompleteError {
-                    case .noConnection:
-                        self.autoCompletePreview = .noConnection
-                    case .invalidResponse(let message):
-                        self.errorMessage = LocationDetailViewModelErrorMessage(
-                            localizedKey: String.localized("location_detail_view_error_messages_invalid_response_title"),
-                            serverMessage: message
-                        )
-                    }
-                } else {
-                    // TODO: Improve error handling
+            } catch let error as LocationsAutoCompleteUseCaseError {
+                switch error {
+                case .noConnection:
+                    self.autoCompletePreview = .noConnection
+                case .loadingFailed(let message):
                     self.errorMessage = LocationDetailViewModelErrorMessage(
-                        localizedKey: String.localized("location_detail_view_autocomplete_section_load_failure_message_generic")
+                        title: String.localized("location_detail_view_error_messages_invalid_response_title"),
+                        serverMessage: message
                     )
                 }
             }

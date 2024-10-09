@@ -18,50 +18,95 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
         self.networkService = networkService
     }
     
-    public func getLocations() async throws -> [Location] {
+    public func getLocations() async throws(LocationsRepositoryFetchError) -> [Location] {
         let hasConnection = await networkService.isConnected()
         
         var locations: [Location]
         
         if hasConnection {
             // we load and then remove all existing records sourced from the server
-            try await removeAllOnlineLocations()
+            do {
+                try await removeAllOnlineLocations()
+            } catch {
+                throw LocationsRepositoryFetchError.loadingFailed("Error while cleaning up local data cache: \(error.localizedDescription)")
+            }
             
-            // we now load online records, and store them in our local persistence
-            var workingObject = try await loadAndStoreOnlineLocations();
-            
-            // we complete our search by adding custom locations
-            let customLocations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "custom" })
-            workingObject.append(contentsOf: customLocations)
-            
-            locations = workingObject
+            do {
+                // we now load online records, and store them in our local persistence
+                var workingObject = try await loadAndStoreOnlineLocations();
+                
+                // we complete our search by adding custom locations
+                let customLocations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "custom" })
+                workingObject.append(contentsOf: customLocations)
+                
+                locations = workingObject
+            } catch {
+                throw LocationsRepositoryFetchError.loadingFailed("Error while loading online data: \(error.localizedDescription)")
+            }
             
         } else {
             // we first remove expired locations from the datastore
-            try await removeExpiredLocations()
-            locations = try await localLocationsSerivce.getLocations(nil);
+            do {
+                try await removeExpiredLocations()
+            } catch {
+                throw LocationsRepositoryFetchError.loadingFailed("Error while cleaning up local data cache: \(error.localizedDescription)")
+            }
+            do {
+                locations = try await localLocationsSerivce.getLocations(nil);
+            } catch {
+                throw LocationsRepositoryFetchError.loadingFailed("Error while loading local data: \(error.localizedDescription)")
+            }
         }
         
         // we sort locations on name upon return.
         return locations.sorted(by: { $0.name < $1.name })
     }
     
-    public func createLocation(_ location: Location) async throws -> Location {
-        return try await localLocationsSerivce.createLocation(location)
+    public func createLocation(_ location: Location) async throws(LocationsRepositoryAddError) -> Location {
+        do {
+            return try await localLocationsSerivce.createLocation(location)
+        } catch {
+            switch error {
+            case .insertFailed(let message):
+                throw LocationsRepositoryAddError.addLocationFailed("Error while adding location: \(message ?? "unkown")")
+            case .notFound, .fetchFailed, .updateFailed, .deleteFailed:
+                throw LocationsRepositoryAddError.addLocationFailed("An unanticipated error occured")
+            }
+            
+        }
     }
     
-    public func updateloation(_ location: Location) async throws -> Location {
+    public func updateloation(_ location: Location) async throws(LocationsRepositoryUpdateError) -> Location {
         guard location.source == .custom else {
-            throw LocationsRepositoryError.cannotModifyOnlineRecord
+            throw LocationsRepositoryUpdateError.cannotModifyOnlineRecord
         }
-        return try await localLocationsSerivce.updateLocation(location)
+        
+        do {
+            return try await localLocationsSerivce.updateLocation(location)
+        } catch let error {
+            switch error {
+            case .updateFailed(let message):
+                throw LocationsRepositoryUpdateError.updateLocationFailed("Error while updating location: \(message ?? "unkown")")
+            case .notFound, .fetchFailed, .insertFailed, .deleteFailed:
+                throw LocationsRepositoryUpdateError.updateLocationFailed("An unanticipated error occured")
+            }
+        }
     }
     
-    public func deleteLocation(_ location: Location) async throws {
+    public func deleteLocation(_ location: Location) async throws(LocationsRepositoryDeleteError) {
         guard location.source == .custom else {
-            throw LocationsRepositoryError.cannotDeleteOnlineRecord
+            throw LocationsRepositoryDeleteError.cannotDeleteOnlineRecord
         }
-        return try await localLocationsSerivce.deleteLocation(location)
+        do {
+            return try await localLocationsSerivce.deleteLocation(location)
+        } catch {
+            switch error {
+            case .deleteFailed(let message):
+                throw LocationsRepositoryDeleteError.deleteRecordFailed("Error while deleting location: \(message ?? "unkown")")
+            case .notFound, .fetchFailed, .insertFailed, .updateFailed:
+                throw LocationsRepositoryDeleteError.deleteRecordFailed("An unanticipated error occured")
+            }
+        }
     }
     
     // MARK: Convenience functions

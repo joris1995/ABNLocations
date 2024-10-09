@@ -16,12 +16,12 @@ final class MockAutoCompleteUseCase: LocationsAutoCompleteUseCaseProtocol, @unch
     
     var mockSuggestions: [LocationPreview]?
 
-    func execute(with query: String) async throws -> [LocationPreview] {
+    func execute(with query: String) async throws(LocationsAutoCompleteUseCaseError) -> [LocationPreview] {
         if !hasConnection {
-            throw LocationsAutoCompleteRepositoryError.noConnection
+            throw LocationsAutoCompleteUseCaseError.noConnection
         }
         if shouldThrowError {
-            throw NSError(domain: "TestError", code: 1, userInfo: nil)
+            throw .loadingFailed("TestError")
         }
         
         return mockSuggestions ?? [

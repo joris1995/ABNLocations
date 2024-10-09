@@ -128,7 +128,7 @@ final class RepositoryTests: XCTestCase {
         do {
             try await repository.deleteLocation(serviceLocation)
         } catch {
-            XCTAssertEqual(error as? LocationsRepositoryError, .cannotDeleteOnlineRecord)
+            XCTAssertEqual(error as? LocationsRepositoryDeleteError, .cannotDeleteOnlineRecord)
         }
     }
 }
@@ -139,19 +139,19 @@ final class MockLocalLocationsService: LocalLocationsServiceProtocol, @unchecked
     var mockLocations: [Location] = []
     var didDeleteLocation: Bool = false
 
-    func getLocations(_ filter: Predicate<DBLocation>?) async throws -> [Location] {
+    func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location] {
         return mockLocations
     }
     
-    func createLocation(_ location: Location) async throws -> Location {
+    func createLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location {
         return location
     }
     
-    func updateLocation(_ location: Location) async throws -> Location {
+    func updateLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location {
         return location
     }
     
-    func deleteLocation(_ location: Location) async throws {
+    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
         mockLocations.removeAll {$0.id == location.id}
         didDeleteLocation = true
     }
@@ -166,7 +166,7 @@ final class MockRemoteLocationsService: RemoteLocationsServiceProtocol, @uncheck
         self.configuration = configuration
     }
         
-    func readLocations() async throws -> [Location] {
+    func readLocations() async throws(RemoteLocationsServiceError) -> [Location] {
         return mockLocations
     }
 }

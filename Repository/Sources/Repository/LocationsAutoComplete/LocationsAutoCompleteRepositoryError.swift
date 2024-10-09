@@ -6,6 +6,6 @@
 //
 
 public enum LocationsAutoCompleteRepositoryError: Error {
-    case invalidResponse(String)
+    case invalidResponse(String?)
     case noConnection
 }

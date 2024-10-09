@@ -16,8 +16,8 @@ public protocol LocationsRepositoryProtocol: Sendable {
     
     init(remoteLocationsSerivce: RemoteLocationsServiceProtocol, localLocationsSerivce: LocalLocationsServiceProtocol, networkService: NetworkServiceProtocol)
     
-    func getLocations() async throws -> [Location]
-    func createLocation(_ location: Location) async throws -> Location
-    func updateloation(_ location: Location) async throws -> Location
-    func deleteLocation(_ location: Location) async throws
+    func getLocations() async throws(LocationsRepositoryFetchError) -> [Location]
+    func createLocation(_ location: Location) async throws(LocationsRepositoryAddError) -> Location
+    func updateloation(_ location: Location) async throws(LocationsRepositoryUpdateError) -> Location
+    func deleteLocation(_ location: Location) async throws(LocationsRepositoryDeleteError)
 }

@@ -18,13 +18,23 @@ public final class LocationsAutoCompleteRepository: LocationsAutoCompleteReposit
         self.netowkService = networkService
     }
     
-    public func fetchLocations(query: String) async throws -> [LocationPreview] {
+    public func fetchLocations(query: String) async throws(LocationsAutoCompleteRepositoryError) -> [LocationPreview] {
         let isconnected = await netowkService.isConnected()
         
         guard isconnected else {
             throw LocationsAutoCompleteRepositoryError.noConnection
         }
-    
-        return try await autocompleteService.loadSuggestions(for: query)
+        
+        do {
+            return try await autocompleteService.loadSuggestions(for: query)
+        } catch {
+            switch error {
+                case .noConnection:
+                throw LocationsAutoCompleteRepositoryError.noConnection
+            case .fetchFailed(let message):
+                throw .invalidResponse(message)
+                
+            }
+        }
     }
 }

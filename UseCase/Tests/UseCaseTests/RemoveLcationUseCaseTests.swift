@@ -41,8 +41,7 @@ final class RemoveLocationUseCaseTests: XCTestCase {
         let repo = UseCaseTestUtils.provideRepository(serviceResponseType: .success)
         
         let useCase = RemoveLocationUseCase(repository: repo)
-        
-        var returnedError: Error?
+        var returnedError: RemoveLocationUseCaseError?
         
         do {
             try await useCase.execute(Location(id: UUID(), name: "Test", latitude: 1, longitude: 2, source: .server))
@@ -51,11 +50,12 @@ final class RemoveLocationUseCaseTests: XCTestCase {
         }
         
         XCTAssertNotNil(returnedError)
-        guard let serviceError = returnedError as? LocationsRepositoryError else {
+        guard let serviceError = returnedError as? RemoveLocationUseCaseError else {
             XCTFail("Unexpected error type returned")
             return
         }
-        XCTAssert(serviceError == LocationsRepositoryError.cannotDeleteOnlineRecord)
+        
+        XCTAssert(serviceError == RemoveLocationUseCaseError.cannotRemoveServerLocation)
     }
     
     // Given we have an AddLocationUseCase

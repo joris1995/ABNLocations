@@ -24,9 +24,9 @@ final class LocationDetailViewModelTests: XCTestCase {
         var shouldThrowError: Bool = false
         var addedLocation: Location?
 
-        func execute(_ location: Location) async throws -> Location {
+        func execute(_ location: Location) async throws(AddLocationUseCaseError) -> Location {
             if shouldThrowError {
-                throw NSError(domain: "TestError", code: 1, userInfo: nil)
+                throw .failedToAdd("Error")
             }
             self.addedLocation = location
             return location
@@ -94,7 +94,7 @@ final class LocationDetailViewModelTests: XCTestCase {
             XCTFail("Expected saveLocation to fail due to invalid coordinates, but it succeeded.")
         } catch {
             // Then
-            XCTAssertEqual(viewModel.errorMessage?.localizedKey, String.localized("location_detail_view_error_messages_invalid_coordinates"), "Error message should indicate invalid coordinates")
+            XCTAssertEqual(viewModel.errorMessage?.serverMessage, String.localized("location_detail_view_error_messages_invalid_coordinates"), "Error message should indicate invalid coordinates")
         }
     }
 
@@ -121,8 +121,8 @@ final class LocationDetailViewModelTests: XCTestCase {
             XCTFail("Expected saveLocation to fail with an error, but it succeeded.")
         } catch {
             // Then
-            XCTAssertEqual(viewModel.errorMessage?.localizedKey, String.localized("location_detail_view_autocomplete_section_load_failure_message_generic"), "Error message should indicate that location saving failed")
-            // generic error message, since the error thrown from the mock is not typed, just a failure, so we expect the viewmodel to set a default error message
+            XCTAssertEqual(viewModel.errorMessage?.serverMessage, String.localized("Error"), "Error message should indicate that location saving failed")
+            // generic error message, since the error thrown from the mock just says "Error"
         }
     }
     

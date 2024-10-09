@@ -15,5 +15,5 @@ public protocol LocationsAutoCompleteRepositoryProtocol: Sendable {
     
     init (autocompleteService: LocationsAutocompleteServiceProtocol, networkService: NetworkServiceProtocol)
     
-    func fetchLocations(query: String) async throws -> [LocationPreview]
+    func fetchLocations(query: String) async throws(LocationsAutoCompleteRepositoryError) -> [LocationPreview]
 }

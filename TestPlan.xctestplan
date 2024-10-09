@@ -14,44 +14,44 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Domain",
-        "identifier" : "DomainTests",
-        "name" : "DomainTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Repository",
-        "identifier" : "RepositoryTests",
-        "name" : "RepositoryTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "PresentationTests",
-        "name" : "PresentationTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/UseCase",
-        "identifier" : "UseCaseTests",
-        "name" : "UseCaseTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Service",
+        "containerPath" : "container:Service",
         "identifier" : "ServiceTests",
         "name" : "ServiceTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/ABNLocations.xcodeproj",
+        "containerPath" : "container:UseCase",
+        "identifier" : "UseCaseTests",
+        "name" : "UseCaseTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Presentation",
+        "identifier" : "PresentationTests",
+        "name" : "PresentationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Domain",
+        "identifier" : "DomainTests",
+        "name" : "DomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:ABNLocations.xcodeproj",
         "identifier" : "693187AD2CB099290078C396",
         "name" : "ABNLocationsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Repository",
+        "identifier" : "RepositoryTests",
+        "name" : "RepositoryTests"
       }
     }
   ],

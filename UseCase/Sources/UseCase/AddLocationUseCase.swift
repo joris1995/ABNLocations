@@ -9,8 +9,12 @@ import Foundation
 import Domain
 import Repository
 
+public enum AddLocationUseCaseError: Error {
+    case failedToAdd(String?)
+}
+
 public protocol AddLocationUseCaseProtocol: Sendable {
-    func execute(_ location: Location) async throws -> Location
+    func execute(_ location: Location) async throws(AddLocationUseCaseError) -> Location
 }
 
 public final class AddLocationUseCase: AddLocationUseCaseProtocol {
@@ -20,7 +24,14 @@ public final class AddLocationUseCase: AddLocationUseCaseProtocol {
         self.repository = repository
     }
 
-    public func execute(_ location: Location) async throws -> Location {
-        return try await repository.createLocation(location)
+    public func execute(_ location: Location) async throws(AddLocationUseCaseError) -> Location {
+        do {
+            return try await repository.createLocation(location)
+        } catch {
+            switch error {
+            case .addLocationFailed(let message):
+                throw AddLocationUseCaseError.failedToAdd(message)
+            }
+        }
     }
 }

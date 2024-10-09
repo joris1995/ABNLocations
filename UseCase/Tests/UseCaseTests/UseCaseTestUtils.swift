@@ -37,19 +37,19 @@ final class MockLocalLocationsServiceSuccessResponse: LocalLocationsServiceProto
     var mockLocations: [Location] = []
     var didDeleteLocation: Bool = false
 
-    func getLocations(_ filter: Predicate<DBLocation>?) async throws -> [Location] {
+    func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location] {
         return mockLocations
     }
     
-    func createLocation(_ location: Location) async throws -> Location {
+    func createLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location {
         return location
     }
     
-    func updateLocation(_ location: Location) async throws -> Location {
+    func updateLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location {
         return location
     }
     
-    func deleteLocation(_ location: Location) async throws {
+    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
         mockLocations.removeAll {$0.id == location.id}
         didDeleteLocation = true
     }
@@ -60,20 +60,20 @@ final class MockLocalLocationsServiceFailureResponse: LocalLocationsServiceProto
     var mockLocations: [Location] = []
     var didDeleteLocation: Bool = false
 
-    func getLocations(_ filter: Predicate<DBLocation>?) async throws -> [Location] {
-        throw ServiceError.invalidResponse("Failre")
+    func getLocations(_ filter: Predicate<DBLocation>?) async throws(LocalLocationsServiceError) -> [Location] {
+        throw LocalLocationsServiceError.fetchFailed("Failre")
     }
     
-    func createLocation(_ location: Location) async throws -> Location {
-        throw ServiceError.invalidResponse("Failre")
+    func createLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location {
+        throw LocalLocationsServiceError.insertFailed("Failre")
     }
     
-    func updateLocation(_ location: Location) async throws -> Location {
-        throw ServiceError.invalidResponse("Failre")
+    func updateLocation(_ location: Location) async throws(LocalLocationsServiceError) -> Location {
+        throw LocalLocationsServiceError.updateFailed("Failre")
     }
     
-    func deleteLocation(_ location: Location) async throws {
-        throw ServiceError.invalidResponse("Failre")
+    func deleteLocation(_ location: Location) async throws(LocalLocationsServiceError) {
+        throw LocalLocationsServiceError.deleteFailed("Failre")
     }
 }
 
@@ -86,7 +86,7 @@ final class MockRemoteLocationsServiceSuccessResponse: RemoteLocationsServicePro
         self.configuration = configuration
     }
         
-    func readLocations() async throws -> [Location] {
+    func readLocations() async throws(RemoteLocationsServiceError) -> [Location] {
         return mockLocations
     }
 }
@@ -100,8 +100,8 @@ final class MockRemoteLocationsServiceFailureResponse: RemoteLocationsServicePro
         self.configuration = configuration
     }
         
-    func readLocations() async throws -> [Location] {
-        throw ServiceError.invalidResponse("Failre")
+    func readLocations() async throws(RemoteLocationsServiceError) -> [Location] {
+        throw RemoteLocationsServiceError.invalidResponse("Error")
     }
 }
 
@@ -124,13 +124,13 @@ final class MockAutoCompleteServiceSuccessResponse: LocationsAutocompleteService
         LocationPreview(name: "Test 3", longitude: 1, latitude: 0)
     ]
     
-    func loadSuggestions(for query: String) async throws -> [LocationPreview] {
+    func loadSuggestions(for query: String) async throws(LocationsAutoCompleteServiceError) -> [LocationPreview] {
         return mockPreviews
     }
 }
 
 final class MockAutoCompleteServiceFailureResponse: LocationsAutocompleteServiceProtocol, @unchecked Sendable {
-    func loadSuggestions(for query: String) async throws -> [LocationPreview] {
-        throw ServiceError.invalidResponse("Failure")
+    func loadSuggestions(for query: String) async throws(LocationsAutoCompleteServiceError) -> [LocationPreview] {
+        throw LocationsAutoCompleteServiceError.fetchFailed("Error")
     }
 }
