@@ -84,7 +84,7 @@ final class PresentationTests: XCTestCase {
         // THhen
         let removeExpectation = XCTestExpectation(description: "Wait for removeLocation to succeed and refresh locations")
         viewModel.$locations
-            .dropFirst()
+            .dropFirst(2) // we skip the first 2 entries, since removeLocation first optimistically updates the local array in the viewmodel, and starts updating the actual dataset only after a second
             .sink { locations in
                 XCTAssertEqual(mockRemoveUseCase.removedLocation?.name, "Location 1", "The location should be removed from the use case")
                 XCTAssertEqual(locations.count, 2, "Expect to have two locations again, since the fetch use case still returns 2")
@@ -124,6 +124,7 @@ final class PresentationTests: XCTestCase {
         // Then
         let removeExpectation = XCTestExpectation(description: "Wait for removeLocation to fail and locations to remain unchanged")
         viewModel.$locations
+            .dropFirst(2) // we skip the first two entries, since the viewmodel first optimistically updates it's local array and only starts to trigger actual data updates atfer a second.
             .sink { locations in
                 XCTAssertNil(mockRemoveUseCase.removedLocation, "The location should not be removed when an error occurs")
                 XCTAssertEqual(locations.count, 2, "Locations should remain the same if removal fails")

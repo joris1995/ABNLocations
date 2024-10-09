@@ -85,6 +85,8 @@ public class LocationsOverviewViewModel: ObservableObject {
                             message: message
                         )
                     }
+                    // also reload locations in case of an error, to ensure the user has a valid representation of the data on their screen
+                    fetchLocations()
                 }
             }
         }

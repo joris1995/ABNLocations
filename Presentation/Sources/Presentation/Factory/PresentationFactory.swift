@@ -42,7 +42,6 @@ public class PresentationFactory: @preconcurrency PresentationFactoryProtocol, @
     public func createLocationDetailViewViewModel(_ location: Location?) -> LocationDetailViewModel {
         return LocationDetailViewModel(
             location: location,
-            editModeEnabled: (location?.source ?? .custom) == .custom,
             addLocationUseCase:
                 AddLocationUseCase(
                     repository: repository

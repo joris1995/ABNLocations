@@ -57,7 +57,6 @@ public final class LocationDetailViewModel: ObservableObject {
     
     init(
         location: Location? = nil,
-        editModeEnabled: Bool = false,
         addLocationUseCase: any AddLocationUseCaseProtocol,
         updateloctionUseCase: any UpdateLocationUseCaseProtocol,
         autoCompleteUseCase: any LocationsAutoCompleteUseCaseProtocol
@@ -67,7 +66,7 @@ public final class LocationDetailViewModel: ObservableObject {
         self.updateLocationUseCase = updateloctionUseCase
         self.autoCompleteUseCase = autoCompleteUseCase
         
-        self.isEditable = editModeEnabled
+        self.isEditable = (location?.source ?? .custom) != .server
         
         if let location = location {
             self.name = location.name
