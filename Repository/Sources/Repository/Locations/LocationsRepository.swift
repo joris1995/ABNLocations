@@ -52,14 +52,14 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
     
     public func updateloation(_ location: Location) async throws -> Location {
         guard location.source == .custom else {
-            throw LocationsRepositorError.cannotModifyOnlineRecord
+            throw LocationsRepositoryError.cannotModifyOnlineRecord
         }
         return try await localLocationsSerivce.updateLocation(location)
     }
     
     public func deleteLocation(_ location: Location) async throws {
         guard location.source == .custom else {
-            throw LocationsRepositorError.cannotDeleteOnlineRecord
+            throw LocationsRepositoryError.cannotDeleteOnlineRecord
         }
         return try await localLocationsSerivce.deleteLocation(location)
     }

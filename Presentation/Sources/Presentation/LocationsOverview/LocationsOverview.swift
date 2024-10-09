@@ -48,7 +48,9 @@ public struct LocationsOverview: View {
                     .imageScale(.large)
             })
             .sheet(isPresented: .init(get: { viewModel.modalPresentationState != nil}, set: { _ in viewModel.modalPresentationState = nil }) ) {
-                // TODO: Navigate to detail
+                LocationDetailView(viewModel: viewModel.createDetailViewViewModel(for: viewModel.modalPresentationState?.presentingLocation)) {
+                    viewModel.fetchLocations()
+                }
             }
         }.onAppear {
             viewModel.fetchLocations()

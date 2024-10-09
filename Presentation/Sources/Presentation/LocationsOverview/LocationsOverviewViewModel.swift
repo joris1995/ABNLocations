@@ -22,10 +22,12 @@ public class LocationsOverviewViewModel: ObservableObject {
  
     private let fetchLocationsUseCase: FetchLocationsUseCaseProtocol
     private let removeLocationUseCase: RemoveLocationUseCaseProtocol
-    
-    public init(fetchLocationsUseCase: FetchLocationsUseCaseProtocol, removeLocationUseCase: RemoveLocationUseCaseProtocol) {
+    private let locationDetailViewViewModelFactory: any LocationDetailViewModelFactoryProtocol
+
+    public init(fetchLocationsUseCase: FetchLocationsUseCaseProtocol, removeLocationUseCase: RemoveLocationUseCaseProtocol, locationDetailViewViewModelFactory: any LocationDetailViewModelFactoryProtocol) {
         self.fetchLocationsUseCase = fetchLocationsUseCase
         self.removeLocationUseCase = removeLocationUseCase
+        self.locationDetailViewViewModelFactory = locationDetailViewViewModelFactory
     }
     
     func fetchLocations() {
@@ -50,5 +52,9 @@ public class LocationsOverviewViewModel: ObservableObject {
                 print("Error: \(error)")
             }
         }
+    }
+    
+    func createDetailViewViewModel(for location: Location?) -> LocationDetailViewModel {
+        return locationDetailViewViewModelFactory.createLocationDetailViewViewModel(location)
     }
 }

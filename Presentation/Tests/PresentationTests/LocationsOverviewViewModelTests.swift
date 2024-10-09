@@ -9,14 +9,12 @@ import UseCase
 final class PresentationTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 
-    // MARK: - Test fetchLocations Success
-
     func test_fetchLocations_whenFetchSucceeds_shouldUpdateLocations() async {
         // Given
         let mockFetchUseCase = MockFetchLocationsUseCase()
         let mockRemoveUseCase = MockRemoveLocationUseCase()
         mockFetchUseCase.mockLocations = [Location(id: UUID(), name: "Location 1", latitude: 0, longitude: 1, source: .custom), Location(id: UUID(), name: "Location 2", latitude: 0, longitude: 1, source: .custom)]
-        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase)
+        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase, locationDetailViewViewModelFactory: MockLocationDetailViewModelFactory())
         
         // When
         viewModel.fetchLocations()
@@ -36,14 +34,12 @@ final class PresentationTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 2.0)
     }
 
-    // MARK: - Test fetchLocations Failure
-
     func test_fetchLocations_whenFetchFails_shouldNotUpdateLocations() async {
         // Given
         let mockFetchUseCase = MockFetchLocationsUseCase()
         let mockRemoveUseCase = MockRemoveLocationUseCase()
         mockFetchUseCase.shouldThrowError = true
-        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase)
+        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase, locationDetailViewViewModelFactory: MockLocationDetailViewModelFactory())
         
         // When
         viewModel.fetchLocations()
@@ -60,7 +56,6 @@ final class PresentationTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 2.0)
     }
 
-    // MARK: - Test removeLocation Success
     func test_removeLocation_whenRemoveSucceeds_shouldRefreshLocations() async {
         // Given
         let initialLocations = [
@@ -70,7 +65,7 @@ final class PresentationTests: XCTestCase {
         
         let mockFetchUseCase = MockFetchLocationsUseCase(mockLocations: initialLocations)
         let mockRemoveUseCase = MockRemoveLocationUseCase()
-        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase)
+        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase, locationDetailViewViewModelFactory: MockLocationDetailViewModelFactory())
 
         let fetchExpectation = XCTestExpectation(description: "Wait for initial fetchLocations to complete")
         viewModel.$locations
@@ -101,7 +96,6 @@ final class PresentationTests: XCTestCase {
         await fulfillment(of: [removeExpectation], timeout: 2.0)
     }
 
-    // MARK: - Test removeLocation Failure
     func test_removeLocation_whenRemoveFails_shouldNotRefreshLocations() async {
         // Given
         let mockFetchUseCase = MockFetchLocationsUseCase(
@@ -111,7 +105,7 @@ final class PresentationTests: XCTestCase {
             ]
         )
         let mockRemoveUseCase = MockRemoveLocationUseCase(shouldThrowError: true)
-        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase)
+        let viewModel = LocationsOverviewViewModel(fetchLocationsUseCase: mockFetchUseCase, removeLocationUseCase: mockRemoveUseCase, locationDetailViewViewModelFactory: MockLocationDetailViewModelFactory())
 
         // When
         let locationsExpectation = XCTestExpectation(description: "Wait for initial fetchLocations to complete")
@@ -161,6 +155,15 @@ final class MockFetchLocationsUseCase: FetchLocationsUseCaseProtocol, @unchecked
     }
 }
 
+final class MockAddLocationsUseCase: AddLocationUseCaseProtocol, @unchecked Sendable {
+    
+    init() { }
+
+    func execute(_ location: Location) async throws -> Location {
+        return location
+    }
+}
+
 final class MockRemoveLocationUseCase: RemoveLocationUseCaseProtocol, @unchecked Sendable {
     var shouldThrowError: Bool
     var removedLocation: Location?
@@ -174,5 +177,12 @@ final class MockRemoveLocationUseCase: RemoveLocationUseCaseProtocol, @unchecked
             throw NSError(domain: "TestError", code: 2, userInfo: nil)
         }
         removedLocation = location
+    }
+}
+
+@MainActor
+final class MockLocationDetailViewModelFactory: @preconcurrency LocationDetailViewModelFactoryProtocol, @unchecked Sendable {
+    func createLocationDetailViewViewModel(_ location: Location?) -> LocationDetailViewModel {
+        return LocationDetailViewModel(addLocationUseCase: MockAddLocationsUseCase())
     }
 }

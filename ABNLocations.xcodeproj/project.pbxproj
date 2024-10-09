@@ -42,9 +42,22 @@
 		6936DBAC2CB475B3006FC49C /* Repository */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Repository; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		69161F262CB667A000FF2039 /* Exceptions for "ABNLocations" folder in "ABNLocations" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6931879B2CB099270078C396 /* ABNLocations */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6931879E2CB099270078C396 /* ABNLocations */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				69161F262CB667A000FF2039 /* Exceptions for "ABNLocations" folder in "ABNLocations" target */,
+			);
 			path = ABNLocations;
 			sourceTree = "<group>";
 		};
@@ -462,6 +475,7 @@
 				DEVELOPMENT_TEAM = RFGT2ND336;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ABNLocations/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -491,6 +505,7 @@
 				DEVELOPMENT_TEAM = RFGT2ND336;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ABNLocations/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

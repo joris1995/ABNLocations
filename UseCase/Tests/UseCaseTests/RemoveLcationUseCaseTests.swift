@@ -51,11 +51,11 @@ final class RemoveLocationUseCaseTests: XCTestCase {
         }
         
         XCTAssertNotNil(returnedError)
-        guard let serviceError = returnedError as? LocationsRepositorError else {
+        guard let serviceError = returnedError as? LocationsRepositoryError else {
             XCTFail("Unexpected error type returned")
             return
         }
-        XCTAssert(serviceError == LocationsRepositorError.cannotDeleteOnlineRecord)
+        XCTAssert(serviceError == LocationsRepositoryError.cannotDeleteOnlineRecord)
     }
     
     // Given we have an AddLocationUseCase

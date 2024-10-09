@@ -31,11 +31,6 @@ public final class RemoteLocationsService: RemoteLocationsServiceProtocol {
                 throw RemoteLocationsServiceError.invalidResponse("Invalid response:")
             }
             
-            // Print out the raw JSON string from the data
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("JSON Response: \(jsonString)")
-            }
-            
             struct LocationResponse: Decodable {
                 let locations: [Location]
                 
