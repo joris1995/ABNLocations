@@ -33,7 +33,14 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
             
             do {
                 // we now load online records, and store them in our local persistence
-                var workingObject = try await loadAndStoreOnlineLocations();
+                var workingObject: [Location]
+                do {
+                    workingObject = try await loadAndStoreOnlineLocations();
+                } catch {
+                    // however, if we fail, we fail silently and fall back to our local cache
+                    // TODO: Still let the user know we were not able to connect to the server and we're working with cached data here
+                    workingObject = try await loadLocalLocations(sources: [.server])
+                }
                 
                 // we complete our search by adding custom locations
                 let customLocations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "custom" })
@@ -46,16 +53,7 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
             
         } else {
             // we first remove expired locations from the datastore
-            do {
-                try await removeExpiredLocations()
-            } catch {
-                throw LocationsRepositoryFetchError.loadingFailed("Error while cleaning up local data cache: \(error.localizedDescription)")
-            }
-            do {
-                locations = try await localLocationsSerivce.getLocations(nil);
-            } catch {
-                throw LocationsRepositoryFetchError.loadingFailed("Error while loading local data: \(error.localizedDescription)")
-            }
+            locations = try await loadLocalLocations(sources: [.server, .custom])
         }
         
         // we sort locations on name upon return.
@@ -128,11 +126,28 @@ public final class LocationsRepository: LocationsRepositoryProtocol {
     
     func removeExpiredLocations() async throws {
         let expiredLocations = try await localLocationsSerivce.getLocations(#Predicate { $0.sourceRawValue == "server" }).filter { $0.expirationDate ?? Date() < Date() }
-        
-        print("Removing expired locations: ", expiredLocations)
-        
+                
         for location in expiredLocations {
             try await localLocationsSerivce.deleteLocation(location)
+        }
+    }
+    
+    func loadLocalLocations(removeExpiredRecords: Bool = true, sources: [LocationSource]) async throws(LocationsRepositoryFetchError) -> [Location] {
+        // we first remove expired locations from the datastore
+        if removeExpiredRecords {
+            do {
+                try await removeExpiredLocations()
+            } catch {
+                throw LocationsRepositoryFetchError.loadingFailed("Error while cleaning up local data cache: \(error.localizedDescription)")
+            }
+        }
+        
+        let rawValues = sources.map(\.rawValue)
+        
+        do {
+            return try await localLocationsSerivce.getLocations(#Predicate { rawValues.contains($0.sourceRawValue) });
+        } catch {
+            throw (LocationsRepositoryFetchError).loadingFailed("Error while loading local data: \(error.localizedDescription)")
         }
     }
     

@@ -50,7 +50,7 @@ final class RemoveLocationUseCaseTests: XCTestCase {
         }
         
         XCTAssertNotNil(returnedError)
-        guard let serviceError = returnedError as? RemoveLocationUseCaseError else {
+        guard let serviceError = returnedError else {
             XCTFail("Unexpected error type returned")
             return
         }

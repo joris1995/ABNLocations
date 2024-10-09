@@ -23,6 +23,28 @@
         }
       }
     },
+    "error_message_server_error_generic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oops! Something went wrong."
+          }
+        }
+      }
+    },
+    "labels_general_unknown" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        }
+      }
+    },
     "location_detail_view_actions_section_save_title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -52,17 +74,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show in Wikipedia"
-          }
-        }
-      }
-    },
-    "location_detail_view_autocomplete_section_load_failure_message_generic" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oops! Something went wrong."
           }
         }
       }
@@ -177,6 +188,17 @@
         }
       }
     },
+    "location_detail_view_save_location_save_failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We could not save this location"
+          }
+        }
+      }
+    },
     "location_detail_view_sections_name_title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -184,6 +206,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Name"
+          }
+        }
+      }
+    },
+    "location_detail_view_update_location_error_not_found" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We could not find this location. Please try again later!"
           }
         }
       }

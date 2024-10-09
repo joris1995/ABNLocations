@@ -128,7 +128,7 @@ final class RepositoryTests: XCTestCase {
         do {
             try await repository.deleteLocation(serviceLocation)
         } catch {
-            XCTAssertEqual(error as? LocationsRepositoryDeleteError, .cannotDeleteOnlineRecord)
+            XCTAssertEqual(error, .cannotDeleteOnlineRecord)
         }
     }
 }

@@ -164,6 +164,15 @@ final class MockAddLocationsUseCase: AddLocationUseCaseProtocol, @unchecked Send
     }
 }
 
+final class MockUpdateLocationsUseCase: UpdateLocationUseCaseProtocol, @unchecked Sendable {
+    
+    init() { }
+
+    func execute(_ location: Location) async throws(UpdateLocationUseCaseError) -> Location {
+        return location
+    }
+}
+
 final class MockRemoveLocationUseCase: RemoveLocationUseCaseProtocol, @unchecked Sendable {
     var shouldThrowError: Bool
     var removedLocation: Location?
@@ -183,6 +192,6 @@ final class MockRemoveLocationUseCase: RemoveLocationUseCaseProtocol, @unchecked
 @MainActor
 final class MockLocationDetailViewModelFactory: @preconcurrency LocationDetailViewModelFactoryProtocol, @unchecked Sendable {
     func createLocationDetailViewViewModel(_ location: Location?) -> LocationDetailViewModel {
-        return LocationDetailViewModel(addLocationUseCase: MockAddLocationsUseCase(), autoCompleteUseCase: MockAutoCompleteUseCase())
+        return LocationDetailViewModel(addLocationUseCase: MockAddLocationsUseCase(), updateloctionUseCase: MockUpdateLocationsUseCase(), autoCompleteUseCase: MockAutoCompleteUseCase())
     }
 }

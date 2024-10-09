@@ -47,6 +47,10 @@ public class PresentationFactory: @preconcurrency PresentationFactoryProtocol, @
                 AddLocationUseCase(
                     repository: repository
                 ),
+            updateloctionUseCase:
+                UpdateLocationUseCase(
+                    repository: repository
+                ),
             autoCompleteUseCase:
                 LocationsAutoCompleteUseCase(
                     locationRepository: LocationsAutoCompleteRepository(

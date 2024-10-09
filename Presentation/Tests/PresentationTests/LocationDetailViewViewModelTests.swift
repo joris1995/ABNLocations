@@ -33,17 +33,31 @@ final class LocationDetailViewModelTests: XCTestCase {
         }
     }
     
-    
+    // Mock implementation of the UpdateLocationUseCaseProtocol
+    final class MockUpdateLocationUseCase: UpdateLocationUseCaseProtocol, @unchecked Sendable {
+        var shouldThrowError: Bool = false
+        var updatedLocation: Location?
+
+        func execute(_ location: Location) async throws(UpdateLocationUseCaseError) -> Location {
+            if shouldThrowError {
+                throw .updateFailed("Error")
+            }
+            self.updatedLocation = location
+            return location
+        }
+    }
 
     // MARK: - Test saveLocation Success
     func test_saveLocation_when_coordinates_are_valid() async {
         // Given
         let mockAddLocationUseCase = MockAddLocationUseCase()
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
             addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
         
@@ -77,10 +91,12 @@ final class LocationDetailViewModelTests: XCTestCase {
         // Given
         let mockAddLocationUseCase = MockAddLocationUseCase()
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
             addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
         
@@ -104,10 +120,12 @@ final class LocationDetailViewModelTests: XCTestCase {
         let mockAddLocationUseCase = MockAddLocationUseCase()
         mockAddLocationUseCase.shouldThrowError = true
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
             addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
         
@@ -121,20 +139,22 @@ final class LocationDetailViewModelTests: XCTestCase {
             XCTFail("Expected saveLocation to fail with an error, but it succeeded.")
         } catch {
             // Then
-            XCTAssertEqual(viewModel.errorMessage?.serverMessage, String.localized("Error"), "Error message should indicate that location saving failed")
-            // generic error message, since the error thrown from the mock just says "Error"
+            XCTAssertEqual(viewModel.errorMessage?.serverMessage, String.localized("Save Error"), "Error message should indicate that location saving failed")
+            // generic error message, since the error thrown from the mock just says "Save Error"
         }
     }
     
     // MARK: - Test Autocomplete Debounce Setup
     func test_autocomplete_search_with_connection_successful() {
         // Given
-        let mockAddUseCase = MockAddLocationUseCase()
+        let mockAddLocationUseCase = MockAddLocationUseCase()
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
-            addLocationUseCase: mockAddUseCase,
+            addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
 
@@ -166,18 +186,20 @@ final class LocationDetailViewModelTests: XCTestCase {
     // MARK: - Test Autocomplete Failure with connection
     func test_autocomplete_search_with_connection_unsuccessful() {
         // Given
-        let mockAddUseCase = MockAddLocationUseCase()
+        let mockAddLocationUseCase = MockAddLocationUseCase()
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
         mockAutoCompleteUseCase.shouldThrowError = true
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
-            addLocationUseCase: mockAddUseCase,
+            addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
 
         mockAutoCompleteUseCase.mockSuggestions = [LocationPreview(name: "Suggestion 1", longitude: 4.0, latitude: 52.0)]
-
+        
         let expectation = XCTestExpectation(description: "Wait for error message to be set")
 
         viewModel.setupDebounce()
@@ -201,14 +223,15 @@ final class LocationDetailViewModelTests: XCTestCase {
     // MARK: - Test Autocomplete Failure
     func test_autocomplete_search_without_connection() {
         // Given
-        let mockAddUseCase = MockAddLocationUseCase()
+        let mockAddLocationUseCase = MockAddLocationUseCase()
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         mockAutoCompleteUseCase.hasConnection = false
-
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
-            addLocationUseCase: mockAddUseCase,
+            addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
         
@@ -234,12 +257,14 @@ final class LocationDetailViewModelTests: XCTestCase {
     // MARK: - Test Suggestion Selection
     func test_on_select_suggestion_update_fields() {
         // Given
-        let mockAddUseCase = MockAddLocationUseCase()
+        let mockAddLocationUseCase = MockAddLocationUseCase()
         let mockAutoCompleteUseCase = MockAutoCompleteUseCase()
+        let mockUpdateLocationUseCase = MockUpdateLocationUseCase()
         let viewModel = LocationDetailViewModel(
             location: nil,
             editModeEnabled: true,
-            addLocationUseCase: mockAddUseCase,
+            addLocationUseCase: mockAddLocationUseCase,
+            updateloctionUseCase: mockUpdateLocationUseCase,
             autoCompleteUseCase: mockAutoCompleteUseCase
         )
 

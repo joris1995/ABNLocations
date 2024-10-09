@@ -15,7 +15,10 @@ import Combine
 enum LocationDetailViewViewModelError: Error {
     case invalidCoordinates
     case unknownError
-    case cannotSaveServerRecord
+    case cannotUpdateServerRecord
+    case noExistingLocation
+    case saveFailed(String?)
+    case locationNotFound
 }
 
 enum AutoCompleteViewModel {
@@ -45,15 +48,23 @@ public final class LocationDetailViewModel: ObservableObject {
     @Published var autoCompletePreview: AutoCompleteViewModel?
 
     private let addLocationUseCase: any AddLocationUseCaseProtocol
+    private let updateLocationUseCase: any UpdateLocationUseCaseProtocol
     private let autoCompleteUseCase: any LocationsAutoCompleteUseCaseProtocol
     
     let location: Location?
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(location: Location? = nil, editModeEnabled: Bool = false, addLocationUseCase: any AddLocationUseCaseProtocol, autoCompleteUseCase: any LocationsAutoCompleteUseCaseProtocol) {
+    init(
+        location: Location? = nil,
+        editModeEnabled: Bool = false,
+        addLocationUseCase: any AddLocationUseCaseProtocol,
+        updateloctionUseCase: any UpdateLocationUseCaseProtocol,
+        autoCompleteUseCase: any LocationsAutoCompleteUseCaseProtocol
+    ) {
         self.location = location
         self.addLocationUseCase = addLocationUseCase
+        self.updateLocationUseCase = updateloctionUseCase
         self.autoCompleteUseCase = autoCompleteUseCase
         
         self.isEditable = editModeEnabled
@@ -87,13 +98,52 @@ public final class LocationDetailViewModel: ObservableObject {
         cancellables.removeAll()
     }
     
+    func saveLocation() async throws(LocationDetailViewViewModelError) -> Location {
+        do {
+            if let _ = location {
+                // Modifying an existing location
+                return try await updateLocation()
+            } else {
+                // Adding a new location
+                return try await saveNewLocation()
+            }
+        } catch {
+            switch error {
+            case .invalidCoordinates:
+                self.errorMessage = LocationDetailViewModelErrorMessage(
+                    title: String.localized("alert_title_error"),
+                    serverMessage: String.localized("location_detail_view_error_messages_invalid_coordinates")
+                )
+            case .unknownError:
+                self.errorMessage = LocationDetailViewModelErrorMessage(
+                    title: String.localized("alert_title_error"),
+                    serverMessage: String.localized("error_message_server_error_generic")
+                )
+            case .cannotUpdateServerRecord:
+                self.errorMessage = LocationDetailViewModelErrorMessage(
+                    title: String.localized("alert_title_error"),
+                    serverMessage: String.localized("location_detail_view_error_messages_cannot_modify_server_record")
+                )
+            case .noExistingLocation, .locationNotFound:
+                self.errorMessage = LocationDetailViewModelErrorMessage(
+                    title: String.localized("alert_title_error"),
+                    serverMessage: String.localized("location_detail_view_update_location_error_not_found")
+                )
+            case .saveFailed(let message):
+                self.errorMessage = LocationDetailViewModelErrorMessage(
+                    title: String.localized("alert_title_error"),
+                    serverMessage: String.localized("location_detail_view_actions_section_save_title").appending(" \(message ?? String.localized("labels_general_unknown"))")
+                )
+            
+            }
+            
+            throw error
+        }
+    }
+    
     // MARK: Logic
-    func saveLocation() async throws -> Location {
+    private func saveNewLocation() async throws(LocationDetailViewViewModelError) -> Location {
         guard isEditable, Double(latitude) != nil, Double(longitude) != nil else {
-            self.errorMessage = LocationDetailViewModelErrorMessage(
-                title: String.localized("alert_title_error"),
-                serverMessage: String.localized("location_detail_view_error_messages_invalid_coordinates")
-            )
             throw LocationDetailViewViewModelError.invalidCoordinates
         }
 
@@ -111,11 +161,34 @@ public final class LocationDetailViewModel: ObservableObject {
         } catch {
             switch error {
             case .failedToAdd(let message):
-                self.errorMessage = LocationDetailViewModelErrorMessage(
-                    title: String.localized("alert_title_error"),
-                    serverMessage: message
-                )
-                throw error
+                throw .saveFailed(message)
+            }
+        }
+    }
+    
+    private func updateLocation() async throws(LocationDetailViewViewModelError) -> Location {
+        guard let location = location else { throw LocationDetailViewViewModelError.noExistingLocation }
+        guard let long = Double(latitude), let lat = Double(longitude) else {
+            throw LocationDetailViewViewModelError.invalidCoordinates
+        }
+        
+        guard isEditable && location.source == .custom else {
+            throw .cannotUpdateServerRecord
+        }
+        
+        let updatedLocation = Location(id: location.id, name: name, latitude: lat, longitude: long, source: .custom)
+        
+        do {
+            let result = try await self.updateLocationUseCase.execute(updatedLocation)
+            return result
+        } catch {
+            switch error {
+            case .cannotModifyServerLocation:
+                throw .cannotUpdateServerRecord
+            case .updateFailed(let message):
+                throw .saveFailed(message)
+            case .locationNotFound:
+                throw .locationNotFound
             }
         }
     }

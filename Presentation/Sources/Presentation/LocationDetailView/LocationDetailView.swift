@@ -96,12 +96,12 @@ struct LocationDetailView: View {
     var coordinatesView: some View {
         return Section(header: (Text(String.localized("location_detail_view_coordinates_section_title")))) {
             TextField(String.localized("location_detail_view_coordinates_section_fields_latitude_placeholder"), text: $viewModel.latitude)
-                .keyboardType(.decimalPad)
+                .keyboardType(.numbersAndPunctuation)
                 .disabled(!viewModel.isEditable)
                 .accessibilityLabel( String.localized("location_detail_view_coordinates_section_fields_latitude_placeholder"))
             
             TextField(String.localized("location_detail_view_coordinates_section_fields_longitude_placeholder"), text: $viewModel.longitude)
-                .keyboardType(.decimalPad)
+                .keyboardType(.numbersAndPunctuation)
                 .disabled(!viewModel.isEditable)
                 .accessibilityLabel(String.localized("location_detail_view_coordinates_section_fields_longitude_placeholder"))
         }

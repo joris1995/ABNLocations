@@ -43,6 +43,13 @@ public final class LocationsAutocompleteService: LocationsAutocompleteServicePro
                 if networkError.code == .notConnectedToInternet {
                     throw .noConnection
                 }
+            } else if let mapKitError = error as? MKError {
+                if mapKitError.code == .serverFailure {
+                    throw .noConnection
+                } else if mapKitError.code == .placemarkNotFound {
+                    // we do not fail when no results are found, we just return an empty array
+                    return []
+                }
             }
             throw .fetchFailed(error.localizedDescription)
         }
