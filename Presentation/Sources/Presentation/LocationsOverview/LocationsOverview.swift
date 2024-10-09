@@ -34,19 +34,23 @@ public struct LocationsOverview: View {
                             Label(String.localized("locations_overview_list_item_actions_remove_title"), systemImage: "trash")
                         }
                     }
+                    .accessibilityLabel(location.name)
                 }
             }
             .refreshable {
                 viewModel.fetchLocations()
             }
             .navigationTitle(String.localized("locations_overview_navigationbar_title"))
-            .navigationBarItems(trailing: Button(action: {
+            .accessibilityLabel(String.localized("locations_overview_navigationbar_title"))
+            .navigationBarItems(trailing:
+                Button(action: {
                 // Set modalPresentationState with presentingLocation as nil
                 viewModel.modalPresentationState = .init(presentingLocation: nil)
             }) {
                 Image(systemName: "plus")
                     .imageScale(.large)
-            })
+            }.accessibilityLabel(String.localized("locations_overview_add_button_accessibility_label"))
+            )
             .sheet(isPresented: .init(get: { viewModel.modalPresentationState != nil}, set: { _ in viewModel.modalPresentationState = nil }) ) {
                 LocationDetailView(viewModel: viewModel.createDetailViewViewModel(for: viewModel.modalPresentationState?.presentingLocation)) {
                     viewModel.fetchLocations()

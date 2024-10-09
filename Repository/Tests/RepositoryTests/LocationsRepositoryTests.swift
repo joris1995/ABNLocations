@@ -170,15 +170,3 @@ final class MockRemoteLocationsService: RemoteLocationsServiceProtocol, @uncheck
         return mockLocations
     }
 }
-
-final class MockNetworkMonitor: NetworkServiceProtocol, @unchecked Sendable {
-    var hasConnection: Bool = false
-    
-    init(hasConnection: Bool = false) {
-        self.hasConnection = hasConnection
-    }
-    
-    func isConnected() async -> Bool {
-        return hasConnection
-    }
-}

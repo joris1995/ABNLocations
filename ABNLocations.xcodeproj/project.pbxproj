@@ -34,6 +34,7 @@
 /* Begin PBXFileReference section */
 		69161EEE2CB5AC8F00FF2039 /* UseCase */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UseCase; sourceTree = "<group>"; };
 		69161EFE2CB5B91000FF2039 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
+		69161F272CB6899600FF2039 /* TestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPlan.xctestplan; sourceTree = "<group>"; };
 		6931879C2CB099270078C396 /* ABNLocations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ABNLocations.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		693187AE2CB099290078C396 /* ABNLocationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ABNLocationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		693187B82CB099290078C396 /* ABNLocationsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ABNLocationsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +114,7 @@
 		693187932CB099270078C396 = {
 			isa = PBXGroup;
 			children = (
+				69161F272CB6899600FF2039 /* TestPlan.xctestplan */,
 				69161EFE2CB5B91000FF2039 /* Presentation */,
 				69161EEE2CB5AC8F00FF2039 /* UseCase */,
 				6936DBAC2CB475B3006FC49C /* Repository */,

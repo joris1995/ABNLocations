@@ -23,6 +23,12 @@ public class UseCaseTestUtils {
         let repository = LocationsRepository(remoteLocationsSerivce: mockRemoteLocationsService, localLocationsSerivce: mockLocalLocationsService, networkService: mockNetworkMonitor)
         return repository
     }
+    
+    static public func provideAutoCompleteRepository(serviceResponseType: UseCaseTestServiceResponseType, hasNetworkConnection: Bool) -> LocationsAutoCompleteRepository {
+        let mockNetworkMonitor = MockNetworkMonitor(hasConnection: hasNetworkConnection)
+        let autoCompleteService: any LocationsAutocompleteServiceProtocol = serviceResponseType == .success ? MockAutoCompleteServiceSuccessResponse() : MockAutoCompleteServiceFailureResponse()
+        return LocationsAutoCompleteRepository(autocompleteService: autoCompleteService, networkService: mockNetworkMonitor)
+    }
 }
 
 // Mock Classes
@@ -108,5 +114,23 @@ final class MockNetworkMonitor: NetworkServiceProtocol, @unchecked Sendable {
     
     func isConnected() async -> Bool {
         return hasConnection
+    }
+}
+
+final class MockAutoCompleteServiceSuccessResponse: LocationsAutocompleteServiceProtocol, @unchecked Sendable {
+    var mockPreviews: [LocationPreview] = [
+        LocationPreview(name: "Test 1", longitude: 1, latitude: 0),
+        LocationPreview(name: "Test 2", longitude: 1, latitude: 0),
+        LocationPreview(name: "Test 3", longitude: 1, latitude: 0)
+    ]
+    
+    func loadSuggestions(for query: String) async throws -> [LocationPreview] {
+        return mockPreviews
+    }
+}
+
+final class MockAutoCompleteServiceFailureResponse: LocationsAutocompleteServiceProtocol, @unchecked Sendable {
+    func loadSuggestions(for query: String) async throws -> [LocationPreview] {
+        throw ServiceError.invalidResponse("Failure")
     }
 }

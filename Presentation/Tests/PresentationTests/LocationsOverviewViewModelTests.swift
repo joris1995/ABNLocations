@@ -183,6 +183,6 @@ final class MockRemoveLocationUseCase: RemoveLocationUseCaseProtocol, @unchecked
 @MainActor
 final class MockLocationDetailViewModelFactory: @preconcurrency LocationDetailViewModelFactoryProtocol, @unchecked Sendable {
     func createLocationDetailViewViewModel(_ location: Location?) -> LocationDetailViewModel {
-        return LocationDetailViewModel(addLocationUseCase: MockAddLocationsUseCase())
+        return LocationDetailViewModel(addLocationUseCase: MockAddLocationsUseCase(), autoCompleteUseCase: MockAutoCompleteUseCase())
     }
 }

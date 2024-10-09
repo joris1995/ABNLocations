@@ -24,29 +24,26 @@ struct LocationDetailView: View {
         NavigationView {
             Form {
                 Section(header: Text(String.localized("location_detail_view_sections_name_title"))) {
-                    TextField(String.localized("location_detail_view_sections_name_title"), text: $viewModel.name)
+                    TextField(String.localized("location_detail_view_sections_name_title"), text: $viewModel.name, onEditingChanged: { editing in
+                        if (editing) {
+                            viewModel.setupDebounce()
+                        }})
                         .disabled(!viewModel.isEditable)
-                        .accessibility(label: Text(String.localized("location_detail_view_sections_name_title")))
+                        .accessibilityLabel( String.localized("location_detail_view_sections_name_title"))
                 }
-            
-                Section(header: (Text(String.localized("location_detail_view_coordinates_section_title")))) {
-                    TextField(String.localized("location_detail_view_coordinates_section_fields_latitude_placeholder"), text: $viewModel.latitude)
-                        .keyboardType(.decimalPad)
-                        .disabled(!viewModel.isEditable)
-                        .accessibility(label: Text(String.localized("location_detail_view_coordinates_section_fields_latitude_placeholder")))
-                    
-                    TextField(String.localized("location_detail_view_coordinates_section_fields_longitude_placeholder"), text: $viewModel.longitude)
-                        .keyboardType(.decimalPad)
-                        .disabled(!viewModel.isEditable)
-                        .accessibility(label: Text(String.localized("location_detail_view_coordinates_section_fields_longitude_placeholder")))
+                
+                if let viewModel = viewModel.autoCompletePreview {
+                    autoCompleteSection(viewModel)
+                } else {
+                    coordinatesView
                 }
                 
                 Section(header: (Text(String.localized("location_detail_view_actions_section_title")))) {
                     if viewModel.isEditable {
-                        Button(String.localized("location_detaik_view_actions_section_save_title")) {
+                        Button(String.localized("location_detail_view_actions_section_save_title")) {
                             onSavePressed()
                         }
-                        .accessibility(label: Text(String.localized("location_detaik_view_actions_section_save_title")))
+                        .accessibilityLabel(String.localized("location_detail_view_actions_section_save_title"))
                     }
                     
                     if viewModel.location != nil {
@@ -59,8 +56,12 @@ struct LocationDetailView: View {
             
             if let errorMessage = viewModel.errorMessage {
                     Section {
-                        Text(errorMessage)
+                        Text(errorMessage.localizedKey)
                             .foregroundColor(.red)
+                        
+                        if let serverMessage = errorMessage.serverMessage {
+                            Text(serverMessage)
+                        }
                     }
                 }
             }
@@ -71,9 +72,41 @@ struct LocationDetailView: View {
                     Button(String.localized("location_detail_view_navigation_bar_dismiss_title")) {
                         dismiss()
                     }
-                    .accessibility(label: Text(String.localized("location_detail_view_navigation_bar_dismiss_title")))
+                    .accessibilityLabel(String.localized("location_detail_view_navigation_bar_dismiss_title"))
                 }
             }
+        }
+    }
+    
+    func autoCompleteSection(_ viewmodel: AutoCompleteViewModel) -> some View {
+        return Section(header: (Text(String.localized("location_detail_view_autocomplete_section_title")))) {
+            switch viewmodel {
+            case .results(let results):
+                List(results) { result in
+                    Button(result.name) {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                        viewModel.onSelectSuggestion(result)
+                    }
+                    .accessibilityLabel(result.name)
+                }
+            case .noConnection:
+                Text(String.localized("location_detail_view_autocomplete_section_no_connection_title"))
+                    .accessibilityLabel(String.localized("location_detail_view_autocomplete_section_no_connection_title"))
+            }
+        }.accessibilityLabel( String.localized("location_detail_view_autocomplete_section_title"))
+    }
+    
+    var coordinatesView: some View {
+        return Section(header: (Text(String.localized("location_detail_view_coordinates_section_title")))) {
+            TextField(String.localized("location_detail_view_coordinates_section_fields_latitude_placeholder"), text: $viewModel.latitude)
+                .keyboardType(.decimalPad)
+                .disabled(!viewModel.isEditable)
+                .accessibilityLabel( String.localized("location_detail_view_coordinates_section_fields_latitude_placeholder"))
+            
+            TextField(String.localized("location_detail_view_coordinates_section_fields_longitude_placeholder"), text: $viewModel.longitude)
+                .keyboardType(.decimalPad)
+                .disabled(!viewModel.isEditable)
+                .accessibilityLabel(String.localized("location_detail_view_coordinates_section_fields_longitude_placeholder"))
         }
     }
     

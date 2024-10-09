@@ -1,7 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "location_detaik_view_actions_section_save_title" : {
+    "Key" : {
+      "extractionState" : "manual"
+    },
+    "location_detail_view_actions_section_save_title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -30,6 +33,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show in Wikipedia"
+          }
+        }
+      }
+    },
+    "location_detail_view_autocomplete_section_load_failure_message_generic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oops! Something went wrong."
+          }
+        }
+      }
+    },
+    "location_detail_view_autocomplete_section_no_connection_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Connection!"
+          }
+        }
+      }
+    },
+    "location_detail_view_autocomplete_section_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
           }
         }
       }
@@ -63,6 +99,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coördinates"
+          }
+        }
+      }
+    },
+    "location_detail_view_error_messages_cannot_modify_server_record" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You cannot modify records from the server!"
+          }
+        }
+      }
+    },
+    "location_detail_view_error_messages_invalid_coordinates" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter valid coordinates before saving!"
+          }
+        }
+      }
+    },
+    "location_detail_view_error_messages_invalid_response_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid server response"
           }
         }
       }
@@ -107,6 +176,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Location Name"
+          }
+        }
+      }
+    },
+    "locations_overview_add_button_accessibility_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Location"
           }
         }
       }
