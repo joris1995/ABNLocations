@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Location: Sendable, Decodable, Identifiable {
+public struct Location: Sendable, Decodable, Identifiable, Equatable {
     
     public let id: UUID
     

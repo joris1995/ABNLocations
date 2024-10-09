@@ -28,8 +28,10 @@ public struct LocationsOverview: View {
                         LocationRow(location: location)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(action: {
-                            viewModel.removeLocation(location)
+                        Button(role: .destructive, action: {
+                            withAnimation {
+                                viewModel.removeLocation(location)
+                            }
                         }) {
                             Label(String.localized("locations_overview_list_item_actions_remove_title"), systemImage: "trash")
                         }
@@ -38,7 +40,9 @@ public struct LocationsOverview: View {
                 }
             }
             .refreshable {
-                viewModel.fetchLocations()
+                withAnimation {
+                    viewModel.fetchLocations()
+                }
             }
             .navigationTitle(String.localized("locations_overview_navigationbar_title"))
             .accessibilityLabel(String.localized("locations_overview_navigationbar_title"))

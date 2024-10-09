@@ -60,22 +60,31 @@ public class LocationsOverviewViewModel: ObservableObject {
     }
     
     func removeLocation(_ location: Location) {
-        Task {
-            do {
-                try await removeLocationUseCase.execute(location)
-                fetchLocations()
-            } catch let error as RemoveLocationUseCaseError {
-                switch error {
-                case .cannotRemoveServerLocation:
-                    self.activeError = LocationsOverviewError(
-                        title: String.localized("alert_title_error"),
-                        message: String.localized("locations_overview_error_cannot_remove_server_location")
+        
+        // first remove optimistically in place
+        if let indexOfLocation = locations.firstIndex(of: location) {
+            locations.remove(at: indexOfLocation)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self = self else { return }
+            Task {
+                do {
+                    try await removeLocationUseCase.execute(location)
+                    fetchLocations()
+                } catch let error as RemoveLocationUseCaseError {
+                    switch error {
+                    case .cannotRemoveServerLocation:
+                        self.activeError = LocationsOverviewError(
+                            title: String.localized("alert_title_error"),
+                            message: String.localized("locations_overview_error_cannot_remove_server_location")
+                            )
+                    case .removingFailed(let message):
+                        self.activeError = LocationsOverviewError(
+                            title: String.localized("alert_title_error"),
+                            message: message
                         )
-                case .removingFailed(let message):
-                    self.activeError = LocationsOverviewError(
-                        title: String.localized("alert_title_error"),
-                        message: message
-                    )
+                    }
                 }
             }
         }
